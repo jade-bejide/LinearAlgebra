@@ -64,6 +64,58 @@ public class GaussianElimination {
         return matrix;
     }
 
+    public Integer[][] buildAugMatrix(int n, Integer[][] a, Integer[] b) {
+        Integer[][] augementedMatrix = new Integer[n][n+1];
+        int row = 0;  
+
+        while (row < a.length) {
+            int column = 0;
+            while (column < a[row].length) {
+                augementedMatrix[row][column] = a[row][column];
+                column++;
+            }
+
+            augementedMatrix[row][column] = b[row];
+            row++;
+        }
+
+        return augementedMatrix;
+    }
+
+    public Integer[][] solveGE(Integer[][] matrix) {
+        Integer[] pivot = matrix[0];
+        int row = 1;
+
+        while (row < matrix.length) {
+            Integer multiplier = matrix[row][0] / pivot[0];
+
+            int elem = 0;
+            while (elem < matrix[row].length) {
+                matrix[row][elem] = matrix[row][elem] - (multiplier * pivot[elem]);
+                elem++;
+            }
+            row++;
+        }
+
+        return matrix;
+
+    }
+
+    public void printMatrix(int m, int n, Integer[][] matrix) {
+        int row = 0;
+        while (row < m) {
+            int column = 0;
+            System.out.print("[ ");
+            while (column < n) {
+                System.out.print(matrix[row][column] + " "); 
+                column++;
+            }
+            System.out.print("]");
+            System.out.println("");
+            row++;
+        } 
+    }
+
     public static void main(String[] args) {
         GaussianElimination system = new GaussianElimination();
         int elems = system.getUnknowns();
@@ -74,10 +126,17 @@ public class GaussianElimination {
         }
 
         System.out.println("Building Matrix");
-        system.buildMatrix(elems);
+        Integer[][] a = system.buildMatrix(elems);
         System.out.println("");
         System.out.println("Building Known Column Vector");
-        system.parseRC(elems);
+        Integer[] v = system.parseRC(elems);
+
+        Integer[][] augumentedMatrix = system.buildAugMatrix(elems, a, v);
+        System.out.println("Matrix: ");
+        system.printMatrix(elems, elems, a);
+        System.out.println("Augmented Matrix: ");
+        system.printMatrix(elems, elems+1, augumentedMatrix);
+
 
         b.close();
         mBym.close();
