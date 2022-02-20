@@ -19,8 +19,8 @@ public class GaussianElimination {
     }
 
     //parse rows or columns of size unknowns
-    public Integer[] parseRC(int unknowns) {
-        Integer[] cVec = new Integer[unknowns];
+    public Double[] parseRC(int unknowns) {
+        Double[] cVec = new Double[unknowns];
 
 
         System.out.print("Enter b: ");
@@ -37,12 +37,12 @@ public class GaussianElimination {
 
         int i = 0;
         for (String digit : cVecs) {
-            cVec[i] = Integer.parseInt(digit);
+            cVec[i] = Double.parseDouble(digit);
             i++;
         }
 
         System.out.print("[ ");
-        for (Integer digit : cVec) {
+        for (Double digit : cVec) {
             System.out.print(digit + " ");
         }
         System.out.print("]");
@@ -51,8 +51,8 @@ public class GaussianElimination {
         return cVec;
     }
 
-    public Integer[][] buildMatrix(int unknowns) {
-        Integer[][] matrix = new Integer[unknowns][unknowns];
+    public Double[][] buildMatrix(int unknowns) {
+        Double[][] matrix = new Double[unknowns][unknowns];
 
         int rows = 0;
 
@@ -64,8 +64,8 @@ public class GaussianElimination {
         return matrix;
     }
 
-    public Integer[][] buildAugMatrix(int n, Integer[][] a, Integer[] b) {
-        Integer[][] augmentedMatrix = new Integer[n][n+1];
+    public Double[][] buildAugMatrix(int n, Double[][] a, Double[] b) {
+        Double[][] augmentedMatrix = new Double[n][n+1];
         int row = 0;  
 
         while (row < a.length) {
@@ -82,15 +82,15 @@ public class GaussianElimination {
         return augmentedMatrix;
     }
 
-    public Integer[][] getTriangularForm(Integer[][] matrix) {
+    public Double[][] getTriangularForm(Double[][] matrix) {
         int row = 0;
         int column = 0;
         while (row < matrix.length) {
-            Integer[] pivot = matrix[row];
+            Double[] pivot = matrix[row];
     
             int feederRow = row + 1;
             while (feederRow < matrix.length) {
-                Integer multiplier = matrix[feederRow][column] / pivot[column];
+                Double multiplier = matrix[feederRow][column] / pivot[column];
                 int elem = 0;
                 while (elem < matrix[feederRow].length) {
                     matrix[feederRow][elem] = matrix[feederRow][elem] - (multiplier * pivot[elem]);
@@ -106,15 +106,37 @@ public class GaussianElimination {
         return matrix;
     }
 
-    public Integer[][] solveGE(Integer[][] matrix) {
-        Integer[][] triForm = getTriangularForm(matrix);
+    public Double[][] solveGE(Double[][] matrix) {
+        Double[][] triForm = getTriangularForm(matrix);
+
+        Double[] v = new Double[triForm.length-1];
+        int m = matrix.length;
+        int n = m;
+        Double[] coef = new Double[triForm.length-2];
+
+        int row = m-1;
+        int column = 0;
+
+        Double val = 0.0;
+
+        int i = 0;
+
+        while (row > -1) {
+            while (column < n -1) {
+                val += triForm[row][column];
+                column++;
+            }
+            v[i] = val / triForm[row][column];
+            row--;
+        }
+
 
 
         return triForm;
 
     }
 
-    public void printMatrix(int m, int n, Integer[][] matrix) {
+    public void printMatrix(int m, int n, Double[][] matrix) {
         int row = 0;
         while (row < m) {
             int column = 0;
@@ -129,7 +151,7 @@ public class GaussianElimination {
         } 
     }
 
-    public void printMatrix(int n, Integer[] matrix) {
+    public void printMatrix(int n, Double[] matrix) {
         int column = 0;
         System.out.print("[ ");
         while (column < n) {
@@ -150,19 +172,19 @@ public class GaussianElimination {
         }
 
         System.out.println("Building Matrix");
-        Integer[][] a = system.buildMatrix(elems);
+        Double[][] a = system.buildMatrix(elems);
         System.out.println("");
         System.out.println("Building Known Column Vector");
-        Integer[] v = system.parseRC(elems);
+        Double[] v = system.parseRC(elems);
 
-        Integer[][] augmentedMatrix = system.buildAugMatrix(elems, a, v);
+        Double[][] augmentedMatrix = system.buildAugMatrix(elems, a, v);
         System.out.println("Matrix: ");
         system.printMatrix(elems, elems, a);
         System.out.println("Augmented Matrix: ");
         system.printMatrix(elems, elems+1, augmentedMatrix);
 
         System.out.println("Triangular Form: ");
-        Integer[][] round1 = system.solveGE(augmentedMatrix);
+        Double[][] round1 = system.solveGE(augmentedMatrix);
         system.printMatrix(elems, elems+1, round1);
 
 
